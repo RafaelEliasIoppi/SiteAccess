@@ -3,6 +3,7 @@ package com.exemplo.siteaccess;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 
 import org.jsoup.Jsoup;
@@ -20,7 +21,7 @@ public class SiteAcess {
 
                 // Acessa os links do menu
                 Elements mainLinks = doc.select(".menu a[href]");
-                for (int i = 0; i < Math.min(5, mainLinks.size()); i++) {
+                for (int i = 0; i < Math.min(15, mainLinks.size()); i++) {
                     String url = mainLinks.get(i).attr("abs:href");
                     if (url.contains("rafaeleliasioppi.github.io") && !url.endsWith("#")) {
                         acessar(url, log);
@@ -29,7 +30,7 @@ public class SiteAcess {
 
                 // Acessa os botões de produto
                 Elements botoes = doc.select("a.botao-link");
-                for (int i = 0; i < Math.min(5, botoes.size()); i++) {
+                for (int i = 0; i < Math.min(10, botoes.size()); i++) {
                     String url = botoes.get(i).attr("abs:href");
                     acessar(url, log);
 
@@ -37,7 +38,7 @@ public class SiteAcess {
                     try {
                         Document subPage = Jsoup.connect(url).get();
                         Elements internos = subPage.select("a[href]");
-                        for (int j = 0; j < Math.min(3, internos.size()); j++) {
+                        for (int j = 0; j < Math.min(10, internos.size()); j++) {
                             String internoUrl = internos.get(j).attr("abs:href");
                             if (internoUrl.contains("rafaeleliasioppi.github.io")) {
                                 acessar(internoUrl, log);
@@ -63,7 +64,8 @@ public class SiteAcess {
     // Método auxiliar
     private static void acessar(String urlStr, PrintWriter log) {
         try {
-            URL url = new URL(urlStr);
+            URI uri = new URI(urlStr).normalize();
+            URL url = uri.toURL();
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             int status = conn.getResponseCode();
